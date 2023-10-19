@@ -31,29 +31,70 @@ private:
     // Starting at the given node, adds a new node representing the given key
     // and value.
     std::shared_ptr<Node> insert(std::shared_ptr<Node> node, const K& key, const V& value) const {
-        // TODO
-        return nullptr;
+        if (node == nullptr) {
+            return std::make_shared<Node>(key, value);
+        }
+
+        if (key < node->key) {
+            node->left = insert(node->left, key, value);
+        } else if (key > node->key) {
+            node->right = insert(node->right, key, value);            
+        }
+
+        return node;
     }
 
     // Starting at the given node, finds the node that holds the given key, then
     // removes it.
     std::shared_ptr<Node> remove(std::shared_ptr<Node> node, const K& key) const {
-        // TODO
-        return nullptr;
+        if (node == nullptr) {
+            return nullptr;
+        } else if (key < node->key) {
+            node->left = remove(node->left, key);
+        } else if (key > node->key) {
+            node->right = remove(node->right, key);
+        } else {
+            if (node->left == nullptr && node->right == nullptr) {
+                node = nullptr;
+            } else if (node->left == nullptr) {
+                node = node->right;
+            } else if (node->right == nullptr) {
+                node = node->left;
+            } else {
+                auto minNode = minimum(node->right);
+                node->key = minNode->key;
+                node->value = minNode->value;
+                node->right = remove(node->right, minNode->key);
+            }
+        }
+
+        return node;
     }
 
     // Starting at the given node, finds the node matching the given key and
     // returns it.
     std::shared_ptr<Node> find(std::shared_ptr<Node> node, const K& key) const {
-        // TODO
-        return nullptr;
+        if (node == nullptr) {
+            return nullptr;
+        }
+
+        if (key < node->key) {
+            return find(node->left, key);
+        } else if (key > node->key) {
+            return find(node->right, key);
+        } else {
+            return node;
+        }
     }
 
     // Returns the node containing the minimum value in the subtree whose
     // root is the given node.
     std::shared_ptr<Node> minimum(std::shared_ptr<Node> node) const {
-        // TODO
-        return nullptr;
+        std::shared_ptr<Node> temp = node;
+        while (temp->left != nullptr) {
+            temp = temp->left;
+        }
+        return temp;
     }
 
     // Performs an inorder traversal starting at the given node.
